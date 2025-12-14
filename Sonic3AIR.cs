@@ -1,0 +1,37 @@
+﻿using CrowdControl.Common;
+using JetBrains.Annotations;
+
+namespace CrowdControl.Games.Packs.Sonic3AIR;
+
+[UsedImplicitly]
+class Sonic3AIR : SimpleTCPPack
+{
+    public override string Host => "127.0.0.1";
+    public override ushort Port => 58430;
+
+    public override Game Game { get; } = new("Sonic 3 A.I.R.", "Sonic3AIR", "PC", ConnectorType.SimpleTCPServerConnector);
+
+    public override EffectList Effects
+    {
+        get
+        {
+            List<Effect> effects =
+            [
+                new("Give Ring", "AddRing")
+                    { Price = 1, Description = "Give the player a ring." },
+                new("Take Ring", "TakeRing")
+                    { Price = 1, Description = "Take a ring from the player" },
+            ];
+            return effects;
+        }
+    }
+
+    public Sonic3AIR(UserRecord player, Func<CrowdControlBlock, bool> responseHandler, Action<object> statusUpdateHandler) : base(player, responseHandler, statusUpdateHandler)
+    {
+    }
+
+    protected override GameState GetGameState()
+    {
+        return GameState.Ready;
+    }
+}

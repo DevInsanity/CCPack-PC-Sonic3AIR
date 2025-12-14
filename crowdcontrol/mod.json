@@ -1,0 +1,16 @@
+{
+	"Metadata":
+	{
+		"Name": "CrowdControl",
+		"UniqueID": "club601-crowdcontrol",
+		"Author": "Club601",
+		"Description": "CrowdControl for Sonic 3 A.I.R.",
+		"URL": "",
+		"ModVersion": "1.0.0.0",
+		"GameVersion": "24.02.02.1"
+	},
+	"UsesFeatures":
+	{
+		"CrowdControl": true
+	}
+}
