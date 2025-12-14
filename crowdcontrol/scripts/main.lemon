@@ -20,7 +20,7 @@ function u8 Game.triggerCrowdControlEffect(string effectCode)
 		addRings(1)
 		return CCStatusCode.SUCCESS
 	} 
-    else if (effectCode == "TakeRing")
+    if (effectCode == "TakeRing")
     {
         if (player.total_rings == 0)
         {
