@@ -21,6 +21,14 @@ class Sonic3AIR : SimpleTCPPack<SimpleTCPServerConnector>
                     { Price = 1, Description = "Give the player a ring." },
                 new("Take Ring", "TakeRing")
                     { Price = 1, Description = "Take a ring from the player" },
+                new("Give Shield", "shieldBlue")
+                    { Price = 3, Description = "Gives A Shield to the Player" },
+                new("Give Fire Shield", "shieldFire")
+                    { Price = 3, Description = "Gives A Shield to the Player" },
+                new("Give Thunder Shield", "shieldThunder")
+                    { Price = 3, Description = "Gives A Shield to the Player" },
+                new("Give Bubble Shield", "shieldBubble")
+                    { Price = 3, Description = "Gives A Shield to the Player" },
             ];
             return effects;
         }
