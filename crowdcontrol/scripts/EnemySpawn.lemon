@@ -5,7 +5,11 @@ function void UpdateGamePause()
 	base.UpdateGamePause()
 	
 	// should probably put in something to ensure we're in standard play?
+    #if GAMEAPP >= 0x25021500
 	if (Input.buttonPressed(0, BUTTON_L))
+    #else
+    if (Input.buttonPressed(BUTTON_L))
+    #endif
 	{
 		if (!CrowdControl.SpawnRandomEnemy())
 		{
@@ -33,7 +37,9 @@ function bool CrowdControl.SpawnRandomEnemy()
 	else if (global.zone.apparent == 0x01)
 	{
 		// HCZ
+        #if GAMEAPP >= 0x25021500
 		rand = System.randRange(0,5)
+        #endif
 		if (rand == 0)
 		{
 			updateAddress = addressof(Blastoid.BaseUpdate)
@@ -62,7 +68,9 @@ function bool CrowdControl.SpawnRandomEnemy()
 	else if (global.zone.apparent == 0x02)
 	{
 		// MGZ
+        #if GAMEAPP >= 0x25021500
 		rand = System.randRange(0,3)
+        #endif
 		if (rand == 0)
 		{
 			updateAddress = addressof(BubblesEnemy.Update)
@@ -83,7 +91,9 @@ function bool CrowdControl.SpawnRandomEnemy()
 	else if (global.zone.apparent == 0x03)
 	{
 		// CNZ
+        #if GAMEAPP >= 0x25021500
 		rand = System.randRange(0,2)
+        #endif
 		if (rand == 0)
 		{
 			updateAddress = addressof(Batbot.BaseUpdate)
@@ -100,7 +110,9 @@ function bool CrowdControl.SpawnRandomEnemy()
 	else if (global.zone.apparent == 0x05)
 	{
 		// ICZ
+        #if GAMEAPP >= 0x25021500
 		rand = System.randRange(0,2)
+        #endif
 		if (rand == 0)
 		{
 			// may want some mechanism to adjust the spawn position of this one upwards more.
@@ -118,7 +130,9 @@ function bool CrowdControl.SpawnRandomEnemy()
 	else if (global.zone.apparent == 0x06)
 	{
 		// LBZ
+        #if GAMEAPP >= 0x25021500
 		rand = System.randRange(0,4)
+        #endif
 		if (rand == 0)
 		{
 			// may want some mechanism to adjust the spawn position of this one upwards more.
@@ -144,7 +158,9 @@ function bool CrowdControl.SpawnRandomEnemy()
 	else if (global.zone.apparent == 0x07)
 	{
 		// MHZ
+        #if GAMEAPP >= 0x25021500
 		rand = System.randRange(0,4)
+        #endif
 		if (rand == 0)
 		{
 			updateAddress = addressof(Butterfly.Update)
@@ -169,7 +185,9 @@ function bool CrowdControl.SpawnRandomEnemy()
 	else if (global.zone.apparent == 0x04)
 	{
 		// FBZ
+        #if GAMEAPP >= 0x25021500
 		rand = System.randRange(0,1)
+        #endif
 		if (rand == 0)
 		{
 			updateAddress = addressof(Blaster.BaseUpdate)
@@ -182,7 +200,9 @@ function bool CrowdControl.SpawnRandomEnemy()
 	else if (global.zone.apparent == 0x08)
 	{
 		// SOZ
+        #if GAMEAPP >= 0x25021500
 		rand = System.randRange(0,2)
+        #endif
 		if (rand == 0)
 		{
 			// might not be killable if it doesn't spawn on ground (and so you can't roll into it)
@@ -209,7 +229,9 @@ function bool CrowdControl.SpawnRandomEnemy()
 	else if (global.zone.apparent == 0x09)
 	{
 		// LRZ
+        #if GAMEAPP >= 0x25021500
 		rand = System.randRange(0,2)
+        #endif
 		if (rand == 0)
 		{
 			updateAddress = addressof(Fireworm.Hole.BaseUpdate)
@@ -233,7 +255,9 @@ function bool CrowdControl.SpawnRandomEnemy()
 	else if (global.zone.apparent == 0x0b)
 	{
 		// DEZ
+        #if GAMEAPP >= 0x25021500
 		rand = System.randRange(0,1)
+        #endif
 		if (rand == 0)
 		{
 			updateAddress = addressof(Chainspike.BaseUpdate)
