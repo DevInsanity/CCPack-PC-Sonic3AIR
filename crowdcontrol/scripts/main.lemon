@@ -12,21 +12,30 @@ constant u8 CCStatusCode.FINISHED		= 0x08		// The timed effect has finished
 
 function u8 Game.triggerCrowdControlEffect(string effectCode)
 {
+    return Game.triggerCrowdControlEffect(effectCode, 1)
+}
+
+function u8 Game.triggerCrowdControlEffect(string effectCode, u16 quantity)
+{
 	// Debug output
 	//debugLog(effectCode)
+    if (!Game.isNormalGame() || global.game.paused) // Main Game and not loading
+    {
+        return CCStatusCode.FAILURE
+    }
 
 	if (effectCode == "AddRing")
 	{
-		addRings(1)
+		addRings(quantity)
 		return CCStatusCode.SUCCESS
-	} 
-    else if (effectCode == "TakeRing")
+	}
+	if (effectCode == "TakeRing")
     {
-        if (player.total_rings == 0)
+        if (player.total_rings < quantity)
         {
             return CCStatusCode.FAILURE
         }
-        D0 = -1
+        D0 = -quantity
         AddRings()
 		return CCStatusCode.SUCCESS
     }
@@ -74,7 +83,7 @@ function void Debugging.debugDraw()
 	{
 		if (!key2_state)
 		{
-			Game.triggerCrowdControlEffect("AddRing")
+			Game.triggerCrowdControlEffect("AddRing", 1)
 			key2_state = true
 		}
 	}
