@@ -18,9 +18,15 @@ class Sonic3AIR : SimpleTCPPack<SimpleTCPServerConnector>
             List<Effect> effects =
             [
                 new("Give Ring", "AddRing")
-                    { Price = 1, Description = "Give the player a ring." },
+                    { Price = 1, Description = "Give the player a ring.", Quantity = 99 },
                 new("Take Ring", "TakeRing")
-                    { Price = 1, Description = "Take a ring from the player" },
+                    { Price = 1, Description = "Take a ring from the player", Quantity = 99 },
+                new("Change to Sonic", "CharSonic")
+                    { Price = 5, Description = "Change the character to Sonic." },
+                new("Change to Tails", "CharTails")
+                    { Price = 5, Description = "Change the character to Tails." },
+                new("Change to Knuckles", "CharKnuckles")
+                    { Price = 5, Description = "Change the character to Knuckles." },
                 new("Give Shield", "shieldBlue")
                     { Price = 3, Description = "Gives A Shield to the Player" },
                 new("Give Fire Shield", "shieldFire")
