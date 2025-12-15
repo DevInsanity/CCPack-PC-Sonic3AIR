@@ -11,6 +11,8 @@ constant u8 CCStatusCode.FINISHED		= 0x08		// The timed effect has finished
 
 constant u8 object_size = 0x4A
 
+global bool timerA
+
 function void PreFrameUpdate()
 {
     if (global.characters == CHARS_TAILS_ALONE)
@@ -68,6 +70,82 @@ function u8 Game.triggerCrowdControlEffect(string effectCode, u16 quantity)
         A0 = ABackUp
 		return CCStatusCode.SUCCESS
     }
+    if (effectCode == "shieldFire")
+	{
+		u32 ABackUp = A1
+		A1 = 0xffffb000
+		ItemEffect.ApplyShieldFire()
+		A1 = ABackUp
+		return CCStatusCode.SUCCESS
+	}
+	if (effectCode == "shieldBubble")
+	{
+		u32 ABackUp = A1
+		A1 = 0xffffb000
+		ItemEffect.ApplyShieldBubble()
+		A1 = ABackUp
+		return CCStatusCode.SUCCESS
+	}
+	if (effectCode == "shieldThunder")
+	{
+		u32 ABackUp = A1
+		A1 = 0xffffb000
+		ItemEffect.ApplyShieldLightning()
+		A1 = ABackUp
+		return CCStatusCode.SUCCESS
+	}
+	if (effectCode == "shieldBlue")
+	{
+		u32 ABackUp = A1
+		A1 = 0xffffb000
+		ItemEffect.applyShield(0, addressof(InstaShield.Init), SFX_CLASSICSHIELD)
+		A1 = ABackUp
+		return CCStatusCode.SUCCESS
+	}
+	if (effectCode == "Slap" && u8[0xffffb000 + 0x2e] == 0)
+	{
+		timerA = true
+		u32 ABackUp = A0
+		A0 = 0xffffb000
+		// u8[0xffffb000 + 0x20] = char.state.GOT_HURT
+		// u8[0xffffb000 + 0x05] = 0x04
+		// // char.base_state = 
+		// ItemEffect.applyShield(0, addressof(InstaShield.Init), SFX_CLASSICSHIELD)
+		// A1 = ABackUp
+
+		
+
+		// char.base_state = 0x04
+		Character.LandingOnGroundNoSpindash()
+		char.flags |= (char.flag.IN_AIR | char.flag.CONTROL_LOCK)
+		if (char.flags & char.flag.UNDERWATER)
+		{
+			char.velocity.x = -0x100
+			char.velocity.y = -0x200
+		}
+		else
+		{
+			char.velocity.x = -0x500
+			char.velocity.y = -0x700
+		}
+		if (char.flags & char.flag.FACING_LEFT)
+		{
+			char.velocity.x = -char.velocity.x
+		}
+
+		char.groundspeed = 0
+		char.state = char.state.GOT_HURT_PANIC
+		char.invuln.countdown = 0
+
+		if (char.character == CHARACTER_SONIC)
+		{
+			// Reset drop dash
+			sonic.dropdash_counter = 0
+		}
+		
+		A0 = ABackUp
+		return CCStatusCode.SUCCESS
+	}
 
 	// For unknown effects
 	return CCStatusCode.UNAVAILABLE
