@@ -1,0 +1,56 @@
+
+function void Jimmy.Update()
+{
+
+	if (objA0.base_state == 0x00)
+	{
+		Jimmy.Init()
+	}
+	else
+	{
+		call tableLookupAddress(0x089838, objA0.base_state)
+	}
+
+	Enemy.DrawOrUnload()
+}
+
+function void Jimmy.Init()
+{
+	objA0.countdown_value = 0x0800
+	objA0.countdown_callback = 0x089926
+
+	setupObjectAttributesFull(0x089b06)
+
+	u32[A0 + 0x30] = 0x089b2c
+	objA0.render_flags |= render_flag.FLIP_X
+	if (objA0.subtype2c == 2)
+		objA0.render_flags |= render_flag.FLIP_Y
+
+	D0.u16 = 0x0400
+	u16[A0 + 0x3a] = D0.u16
+	objA0.velocity.x = D0.u16
+	u16[A0 + 0x3c] = 0x20
+	objA0.flags38 &= ~0x08
+}
+
+// This function probably needs to be shared with any other custom sprites we do
+// (eg, for bumpers to render correctly outside of carnival night?)
+function bool Standalone.onWriteToSpriteTable(s16 px, s16 py, u16 renderQueue)
+{
+
+	bool prioFlag = (objA0.sprite_attributes & sprite_attribute.PRIORITY) != 0
+	
+	if (objA0.update_address == makeCallable(Jimmy.Update))
+	{
+		if (objA0.render_flags & render_flag.FLIP_X)
+		{
+			px += 40
+		}
+		SpriteHandle spr = Renderer.addSpriteHandle("jimmy", px, py - 16, renderQueue)
+		spr.setFlipX(objA0.render_flags & render_flag.FLIP_X)
+		spr.setBlendMode(1)
+		// spr.setCoordinateSpace(1)
+		return true
+	}
+	return base.Standalone.onWriteToSpriteTable(px, py, renderQueue)
+}
