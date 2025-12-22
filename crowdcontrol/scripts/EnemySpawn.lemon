@@ -10,12 +10,25 @@ function void UpdateGamePause()
     #else
     if (Input.buttonPressed(BUTTON_L))
     #endif
-	{
-		if (!CrowdControl.SpawnRandomEnemy())
+	{		
+		if (global.zone_act == 0x0c00)
 		{
-			// should pass this back to crowd control so the user gets refunded
-			System.writeDisplayLine("Didn't trigger")
+			if (!CrowdControl.SpawnEnemy(makeCallable(ExtraMissile.Init), getScreenWidth()/2, 0))
+			{
+				// should pass this back to crowd control so the user gets refunded
+				System.writeDisplayLine("Didn't trigger")
+			}		
 		}
+		else
+		{
+			//if (!CrowdControl.SpawnRandomEnemy())
+			if (!CrowdControl.SpawnEnemy(makeCallable(Jimmy.Update), 128, -32))
+			{
+				// should pass this back to crowd control so the user gets refunded
+				System.writeDisplayLine("Didn't trigger")
+			}
+		}
+		
 	}	
 }
 #endif
@@ -279,17 +292,20 @@ function bool CrowdControl.SpawnRandomEnemy()
 		// DDZ
 	}
 
-	
+	return CrowdControl.SpawnEnemy(updateAddress, 64, -10)
+}
+
+function bool CrowdControl.SpawnEnemy(u32 updateAddress, s16 xOffset, s16 yOffset)
+{
 	if (updateAddress != 0 && allocDynamicObjectStd())
 	{	
 		objA1.update_address = updateAddress
 		objA1.base_state = 0
 		
-		// for now, spawn a litte to the right of camera centre
 		objA1.position.x = camera.position.x
 		objA1.position.y = camera.position.y
-		objA1.position.x.u16 += (getScreenWidth() / 2) + 64
-		objA1.position.y.u16 += (getScreenHeight() / 2) - 10
+		objA1.position.x.u16 += (getScreenWidth() / 2) + xOffset
+		objA1.position.y.u16 += (getScreenHeight() / 2) + yOffset
 
 		return true
 	}
