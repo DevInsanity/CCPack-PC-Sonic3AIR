@@ -1,39 +1,5 @@
-#if 1
-// temporary hook-up mechanism
-function void UpdateGamePause() 
-{
-	base.UpdateGamePause()
-	
-	// should probably put in something to ensure we're in standard play?
-    #if GAMEAPP >= 0x25021500
-	if (Input.buttonPressed(0, BUTTON_L))
-    #else
-    if (Input.buttonPressed(BUTTON_L))
-    #endif
-	{		
-		if (global.zone_act == 0x0c00)
-		{
-			if (!CrowdControl.SpawnEnemy(makeCallable(ExtraMissile.Init), getScreenWidth()/2, 0))
-			{
-				// should pass this back to crowd control so the user gets refunded
-				System.writeDisplayLine("Didn't trigger")
-			}		
-		}
-		else
-		{
-			//if (!CrowdControl.SpawnRandomEnemy())
-			if (!CrowdControl.SpawnEnemy(makeCallable(Jimmy.Update), 128, -32))
-			{
-				// should pass this back to crowd control so the user gets refunded
-				System.writeDisplayLine("Didn't trigger")
-			}
-		}
-		
-	}	
-}
-#endif
-
-include CustomEnemies
+include TestHooks
+include enemies/?
 
 function u32 CrowdControl.Choose(u32 max)
 {
