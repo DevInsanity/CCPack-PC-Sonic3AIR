@@ -3,11 +3,29 @@
 
 constant u8 object_size = 0x4A
 
+global bool blue_spheres_jail = false
+
+//# pre-update-hook
 function void PreFrameUpdate()
 {
+    base.PreFrameUpdate()
     if (global.characters == CHARS_TAILS_ALONE)
     {
         tails.control_counter = 600 // don't let the AI mess with us
+    }
+    if (global.game_mode == 0x2c && blue_spheres_jail)
+    {
+        bluespheregame.current_stage = System.rand()
+        BlueSphere.setGeneratedStage(bluespheregame.current_stage)
+        global.stage_type = 0
+        bluespheres.minigame_mode = 1
+        global.game_mode = 0x34 // Special Stage
+    }
+    if (global.game_mode == 0x30 && blue_spheres_jail)
+    {
+        global.game_mode = 0x0c
+        blue_spheres_jail = false
+        global.stage_type = 1
     }
 }
 
@@ -276,6 +294,29 @@ function void CrowdControl.triggerEffect(u32 id, string code, s32 quantity, s32 
         A0 = ABackUp
         return
     }
+    if (code == "BlueSpheres")
+    {
+        if (global.game_mode != 0x0c)
+        {
+            CrowdControl.sendResponse(id, CCStatusCode.FAILURE, "")
+            return
+        }
+        
+        fn01bb7e()
+        fn02d1cc()
+        global.stage_type = 1
+        global.game_mode = 0x2c // Blue Sphere Game
+        global.in_extra_stage = 1
+        blue_spheres_jail = true
+        bluespheregame.current_stage = System.rand()
+        BlueSphere.setGeneratedStage(bluespheregame.current_stage)
+        global.stage_type = 0
+        bluespheres.minigame_mode = 1
+        global.game_mode = 0x34 // Special Stage
+        CrowdControl.sendResponse(id, CCStatusCode.SUCCESS, "")
+        return
+        
+    }
 
 	// For unknown effects
     base.CrowdControl.triggerEffect(id, code, quantity, duration)
@@ -371,7 +412,7 @@ function void Debugging.debugDraw()
 	{
 		if (!key2_state)
 		{
-			CrowdControl.triggerEffect(-1, "Bumper", 1, -1)
+			CrowdControl.triggerEffect(-1, "BlueSpheres", 1, -1)
 			key2_state = true
 		}
 	}
