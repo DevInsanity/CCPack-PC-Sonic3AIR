@@ -240,6 +240,42 @@ function void CrowdControl.triggerEffect(u32 id, string code, s32 quantity, s32 
         A0 = ABackUp
         return
     }
+    if (code == "Shove")
+    {
+        u32 ABackUp = A0
+        A0 = 0xffffb000
+        char.position.x.u16 += 8
+        char.velocity.x = 2000
+        char.flags &= ~char.flag.FACING_LEFT
+        char.groundspeed = char.velocity.x
+        char.hlock_countdown = 15
+        char.flags &= ~char.flag.PUSHING
+        char.double_jump_state = 0
+        char.state = char.state.RUNNING
+
+        playSound(SFX_SPRING)
+        CrowdControl.sendResponse(id, CCStatusCode.SUCCESS, "")
+        A0 = ABackUp
+        return
+    }
+    if (code == "Reverse")
+    {
+        u32 ABackUp = A0
+        A0 = 0xffffb000
+        char.position.x.u16 -= 8
+        char.velocity.x = -2000
+        char.flags |= char.flag.FACING_LEFT
+        char.groundspeed = char.velocity.x
+        char.hlock_countdown = 15
+        char.flags &= ~char.flag.PUSHING
+        char.double_jump_state = 0
+        char.state = char.state.RUNNING
+
+        playSound(SFX_SPRING)
+        CrowdControl.sendResponse(id, CCStatusCode.SUCCESS, "")
+        A0 = ABackUp
+        return
+    }
 
 	// For unknown effects
     base.CrowdControl.triggerEffect(id, code, quantity, duration)
@@ -335,7 +371,7 @@ function void Debugging.debugDraw()
 	{
 		if (!key2_state)
 		{
-			CrowdControl.triggerEffect(-1, "Kill", 1, -1)
+			CrowdControl.triggerEffect(-1, "Bumper", 1, -1)
 			key2_state = true
 		}
 	}
