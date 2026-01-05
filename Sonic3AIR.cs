@@ -31,6 +31,11 @@ class Sonic3AIR : SimpleTCPPack<SimpleTCPServerConnector>
                     { Price = 5, Description = "Slaps the player." },
                 new("Kill", "Kill")
                     { Price = 100, Description = "Kills the player." },
+                new("Blue Spheres Jail", "BlueSpheres")
+                    {
+                        Price = 250, Description = "Send the player to complete a level of Blue spheres.",
+                        SessionCooldown = 5
+                    },
                 new("Shove", "Shove")
                     { Price = 10, Description = "Shove the player forward with lots of speed." },
                 new("Reverse!", "Reverse")
