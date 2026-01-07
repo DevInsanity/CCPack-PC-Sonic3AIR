@@ -144,6 +144,8 @@ function void CrowdControl.triggerEffect(u32 id, string code, s32 quantity, s32 
     {
         if (allocDynamicObjectStd())
         {
+            u32 ABackUp = A0
+            A0 = 0xffffb000
             objA1.update_address = addressof(Bumper.Init)//0x032ef0
             objA1.base_state = 0
             objA1.position.x = camera.position.x
@@ -162,18 +164,21 @@ function void CrowdControl.triggerEffect(u32 id, string code, s32 quantity, s32 
             }
             u16[A1 + 0x2e] = 600
             objA1.countdown_callback = addressof(UnloadObject)
+            A0 = ABackUp
         
             CrowdControl.sendResponse(id, CCStatusCode.SUCCESS, "")
             return
         }
         
         CrowdControl.sendResponse(id, CCStatusCode.FAILURE, "Object memory is full")
-		return
+        return
     }
     if (code == "Eggbox")
     {
         if (allocDynamicObjectStd())
         {
+            u32 ABackUp = A0
+            A0 = 0xffffb000
             objA1.update_address = addressof(MonitorIntact.BaseUpdate)//0x01d566
             objA1.base_state = 0
             objA1.subtype2c = 0x02
@@ -194,6 +199,7 @@ function void CrowdControl.triggerEffect(u32 id, string code, s32 quantity, s32 
             }
             u16[A1 + 0x2e] = 600
             objA1.countdown_callback = addressof(UnloadObject)
+            A0 = ABackUp
         
             CrowdControl.sendResponse(id, CCStatusCode.SUCCESS, "")
             return
@@ -391,6 +397,68 @@ function void CrowdControl.triggerEffect(u32 id, string code, s32 quantity, s32 
         CrowdControl.sendResponse(id, CCStatusCode.SUCCESS, "")
         return
     }
+    if (code == "VerticalSpring")
+    {
+        if (allocDynamicObjectStd())
+        {
+            u32 ABackUp = A0
+            A0 = 0xffffb000
+            objA1.update_address = addressof(Spring.BaseUpdate)//0x022d06
+            objA1.subtype2c = 0x01
+            objA1.position.x = camera.position.x
+            objA1.position.y = camera.position.y
+            objA1.position.x.u16 += (getScreenWidth() / 2)
+            objA1.position.y.u16 += (getScreenHeight() / 2) + 52
+            if (char.flags & char.flag.FACING_LEFT)
+            {
+                objA1.position.x.u16 -= 32 + char.box_size.x
+                objA1.flags2a &= ~char.flag.FACING_LEFT
+            }
+            else
+            {
+                objA1.position.x.u16 += 32
+                objA1.flags2a |=  char.flag.FACING_LEFT
+            }
+            u16[A1 + 0x2e] = 600
+            objA1.countdown_callback = addressof(UnloadObject)
+            A0 = ABackUp
+            CrowdControl.sendResponse(id, CCStatusCode.SUCCESS, "")
+            return
+        }
+        CrowdControl.sendResponse(id, CCStatusCode.FAILURE, "Object memory is full")
+        return
+    }
+    if (code == "HorizontalSpring")
+    {
+        if (allocDynamicObjectStd())
+        {
+            u32 ABackUp = A0
+            A0 = 0xffffb000
+            objA1.update_address = addressof(Spring.BaseUpdate)//0x022d06
+            objA1.subtype2c = 0x10
+            objA1.position.x = camera.position.x
+            objA1.position.y = camera.position.y
+            objA1.position.x.u16 += (getScreenWidth() / 2)
+            objA1.position.y.u16 += (getScreenHeight() / 2) + 32
+            if (char.flags & char.flag.FACING_LEFT)
+            {
+                objA1.position.x.u16 -= 48 + char.box_size.x
+                objA1.flags2a &= ~char.flag.FACING_LEFT
+            }
+            else
+            {
+                objA1.position.x.u16 += 48
+                objA1.flags2a |=  char.flag.FACING_LEFT
+            }
+            u16[A1 + 0x2e] = 600
+            objA1.countdown_callback = addressof(UnloadObject)
+            A0 = ABackUp
+            CrowdControl.sendResponse(id, CCStatusCode.SUCCESS, "")
+            return
+        }
+        CrowdControl.sendResponse(id, CCStatusCode.FAILURE, "Object memory is full")
+        return
+    }
 
     // For unknown effects
     base.CrowdControl.triggerEffect(id, code, quantity, duration)
@@ -488,7 +556,7 @@ function void Debugging.debugDraw()
 	{
 		if (!key2_state)
 		{
-			CrowdControl.triggerEffect(-1, "BlueSpheres", 1, -1)
+			CrowdControl.triggerEffect(-1, "HorizontalSpring", 1, -1)
 			key2_state = true
 		}
 	}
@@ -554,6 +622,43 @@ function void MonitorIntact.BaseUpdate()
 	//  - 0x01d61e	-> objA0.base_state = 0x06		-> Animation update
 	//  - 0x01d61a	-> objA0.base_state = 0x08		-> Simply calls "DrawOrUnloadObject"
 	call tableLookupAddress(0x01d574, objA0.base_state)
+}
+
+//# address-hook(0x022ef4) end(0x022f40)
+function void SpringVertical.Update()
+{
+    if (objA0.flags2e != 0)
+    {
+        objA0.position.x.frac = 1 // unused for any object except the player, using it as a flag
+    }
+    if (objA0.position.x.frac == 1)
+    {
+        --u16[A0 + 0x2e]
+        if (u16[A0 + 0x2e] == 0)
+        {
+            UnloadObject()
+        }
+    }
+    SpringVertical.updateInternal(false)
+}
+
+//# address-hook(0x023050) end(0x0230d8)
+//# alias(SpringHorizontal.Check) deprecated
+function void SpringHorizontal.Update()
+{
+    if (objA0.flags2e != 0)
+    {
+        objA0.position.x.frac = 1 // unused for any object except the player, using it as a flag
+    }
+    if (objA0.position.x.frac == 1)
+    {
+        --u16[A0 + 0x2e]
+        if (u16[A0 + 0x2e] == 0)
+        {
+            UnloadObject()
+        }
+    }
+    base.SpringHorizontal.Update()
 }
 
 function void CrowdControl.SlapPlayer()
