@@ -56,6 +56,10 @@ function void PreFrameUpdate()
         {
             CrowdControl.sendResponse(no_jump_id, CCStatusCode.PAUSED, "")
         }
+        if (no_jump_ability_timer > 0)
+        {
+            CrowdControl.sendResponse(no_jump_ability_id, CCStatusCode.PAUSED, "")
+        }
     }
     if (CrowdControl.prev_paused && !CrowdControl.paused)
     {
@@ -67,6 +71,10 @@ function void PreFrameUpdate()
         if (no_jump_timer > 0)
         {
             CrowdControl.sendResponse(no_jump_id, CCStatusCode.RESUME, "")
+        }
+        if (no_jump_ability_timer > 0)
+        {
+            CrowdControl.sendResponse(no_jump_ability_id, CCStatusCode.RESUME, "")
         }
     }
     if (!CrowdControl.paused)
@@ -85,6 +93,26 @@ function void PreFrameUpdate()
             if (no_jump_timer == 0)
             {
                 CrowdControl.sendResponse(no_jump_id, CCStatusCode.FINISHED, "")
+            }
+        }
+        if (no_jump_ability_timer > 0)
+        {
+            no_jump_ability_timer--
+            if (no_jump_ability_timer == 0)
+            {
+                CrowdControl.sendResponse(no_jump_ability_id, CCStatusCode.FINISHED, "")
+            }
+        }
+    }
+    CrowdControl.prev_paused = CrowdControl.paused
+    if (!global.game.paused)
+    {
+        if (BigArms.Timer > 0)
+        {
+            no_jump_ability_timer--
+            if (no_jump_ability_timer == 0)
+            {
+                CrowdControl.sendResponse(no_jump_ability_id, CCStatusCode.FINISHED, "")
             }
         }
     }
@@ -675,7 +703,7 @@ function void Debugging.debugDraw()
     {
         if (!key2_state)
         {
-            CrowdControl.triggerEffect(-1, "BigArms", 1, 10)
+            CrowdControl.triggerEffect(-1, "BigArms", 1, 10 * 1000)
             key2_state = true
         }
     }
